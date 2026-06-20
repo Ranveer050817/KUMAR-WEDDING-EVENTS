@@ -1,0 +1,8 @@
+{
+  "name": "Kumar Wedding & Events",
+  "description": "Premium luxury wedding & event planning services in Ranchi. Features a beautiful mobile-first design, Supabase gallery integration, and a dedicated admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
