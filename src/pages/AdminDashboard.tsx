@@ -60,12 +60,14 @@ export function AdminDashboard() {
     const filePath = `${fileName}`;
     const { error: uploadError } = await supabase.storage.from('wedding-gallery').upload(filePath, file);
     if (uploadError) {
+      console.error('Storage upload error:', uploadError);
       if (uploadError.message.toLowerCase().includes('bucket not found') || uploadError.message.includes('not found')) {
         throw new Error("Storage bucket 'wedding-gallery' not found. Please create it in Supabase and set it to Public.");
       }
       throw uploadError;
     }
     const { data } = supabase.storage.from('wedding-gallery').getPublicUrl(filePath);
+    console.log('Generated public URL:', data.publicUrl);
     return data.publicUrl;
   };
 

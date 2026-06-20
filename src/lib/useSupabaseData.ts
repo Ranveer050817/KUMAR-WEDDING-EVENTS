@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase, isSupabaseConfigured, DUMMY_GALLERY, DUMMY_SERVICES, DUMMY_TESTIMONIALS, APP_SETTINGS } from './supabase';
+import { supabase, isSupabaseConfigured, supabaseUrl, DUMMY_GALLERY, DUMMY_SERVICES, DUMMY_TESTIMONIALS, APP_SETTINGS } from './supabase';
 import type { GalleryItem, ServiceItem, Testimonial } from '../types';
 
 export function useSupabaseData() {
@@ -24,8 +24,26 @@ export function useSupabaseData() {
           supabase.from('settings').select('*')
         ]);
 
-        if (galleryRes.data && galleryRes.data.length > 0) setGallery(galleryRes.data);
-        if (servicesRes.data && servicesRes.data.length > 0) setServices(servicesRes.data);
+        console.log('Fetched gallery data:', galleryRes.data);
+        if (galleryRes.error) {
+          console.error('Gallery fetch error:', galleryRes.error);
+        }
+
+        const cleanUrls = (items: any[]) => items?.map(item => {
+          if (item.image_url && typeof item.image_url === 'string') {
+            if (item.image_url.includes('localhost') || item.image_url.includes('127.0.0.1')) {
+              // Extract the path after /storage/v1/object/public/ and prepend the current supabaseUrl
+              const pathMatches = item.image_url.match(/\/storage\/v1\/object\/public\/(.*)/);
+              if (pathMatches && pathMatches[1]) {
+                 item.image_url = `${supabaseUrl}/storage/v1/object/public/${pathMatches[1]}`;
+              }
+            }
+          }
+          return item;
+        });
+
+        if (galleryRes.data && galleryRes.data.length > 0) setGallery(cleanUrls(galleryRes.data));
+        if (servicesRes.data && servicesRes.data.length > 0) setServices(cleanUrls(servicesRes.data));
         if (testimonialsRes.data && testimonialsRes.data.length > 0) setTestimonials(testimonialsRes.data);
         
         if (settingsRes.data) {

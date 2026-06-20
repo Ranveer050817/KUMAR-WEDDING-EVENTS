@@ -1,8 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Check both environment variables and localStorage for the keys
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || localStorage.getItem('SUPABASE_URL') || '';
+export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || localStorage.getItem('SUPABASE_URL') || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || localStorage.getItem('SUPABASE_ANON_KEY') || '';
+
+if (!import.meta.env.VITE_SUPABASE_URL && !localStorage.getItem('SUPABASE_URL')) {
+  console.warn('Supabase URL is missing. Ensure VITE_SUPABASE_URL is set in your environment variables.');
+}
 
 // Create realistic dummy data for preview mode when Supabase isn't configured
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
